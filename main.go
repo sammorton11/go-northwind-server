@@ -48,6 +48,34 @@ type Order struct {
 	ShipCountry    sql.NullString `json:"ShipCountry"`
 }
 
+type OrderDetails struct {
+   OrderID int `json:"OrderId"`
+   ProductID int `json:"ProductId"`
+   UnitPrice float64 `json:"UnitPrice"`
+   Quantity int `json:"Quantity"`
+   Discount float64 `json:"Discount"` 
+}
+
+type Product struct {
+   ProductID int `json:"ProductId"`
+   ProductName string `json:"ProductName"`
+   SupplierID int `json:"SupplierId"`
+   CategoryID int `json:"CategoryId"`
+   QuantityPerUnit string `json:"QuantityPerUnit"`
+   UnitPrice float64 `json:"UnitPrice"`
+   UnitsInStock int `json:"UnitsInStock"`
+   UnitsOnOrder int `json:"UnitsOnOrder"`
+   ReorderLevel int `json:"ReorderLevel"`
+   Discontinued int `json:"Discontinued"`
+}
+
+type Category struct {
+   CategoryID int `json:"CategoryId"`
+   CategoryName string `json:"CategoryName"`
+   Description string `json:"Description"`
+   Picture string `json:"Picture"` // this is supposed to be like a blob or something
+}
+
 func main() {
 	db, err := sql.Open("sqlite3", "northwind.db")
 	if err != nil {
@@ -260,5 +288,56 @@ func fetchOrders(db *sql.DB) ([]Order, error) {
 
 		orders = append(orders, order)
 	}
+
 	return orders, nil
+}
+
+func fetchTerritories(db *sql.DB) ([]string, error) {
+   rows, err := db.Query(`SELECT * FROM Territories`)
+   if err != nil {
+      return nil, err
+   }
+   defer rows.Close()
+
+   var territories []string
+
+   for rows.Next() {
+      var territory string
+      err := rows.Scan(&territory)
+      if err != nil {
+         return nil, err
+      }
+
+      territories = append(territories, territory)
+   }
+
+   return territories, nil
+}
+
+func fetchOrderDetails(db *sql.DB) ([]OrderDetails, error) {
+   rows, err := db.Query(`SELECT * FROM OrderDetails`)
+   if err != nil {
+      return nil, err
+   }
+   defer rows.Close()
+
+   var orderDetails []OrderDetails
+
+   for rows.Next() {
+      var orderDetail OrderDetails
+      err := rows.Scan(
+         &orderDetail.OrderID,
+         &orderDetail.ProductID,
+         &orderDetail.UnitPrice,
+         &orderDetail.Quantity,
+         &orderDetail.Discount,
+      )
+      if err != nil {
+         return nil, err
+      }
+
+      orderDetails = append(orderDetails, orderDetail)
+   }
+
+   return orderDetails, nil
 }
