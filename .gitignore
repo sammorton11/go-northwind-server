@@ -1,0 +1,26 @@
+/northwind.db
+
+# Compiled binary files
+*.exe
+*.o
+*.out
+
+# Go binary
+/bin/
+
+# IDE-specific files
+.idea
+.vscode
+*.sublime-workspace
+*.sublime-project
+
+# Log files
+*.log
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
