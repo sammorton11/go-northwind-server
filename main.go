@@ -341,3 +341,31 @@ func fetchOrderDetails(db *sql.DB) ([]OrderDetails, error) {
 
    return orderDetails, nil
 }
+
+func customerOrderTotals(db *sql.DB) ([]OrderDetails, error) {
+   rows, err := db.Query(`SELECT * FROM OrderDetails`)
+   if err != nil {
+      return nil, err
+   }
+   defer rows.Close()
+
+   var orderDetails []OrderDetails
+
+   for rows.Next() {
+      var orderDetail OrderDetails
+      err := rows.Scan(
+         &orderDetail.OrderID,
+         &orderDetail.ProductID,
+         &orderDetail.UnitPrice,
+         &orderDetail.Quantity,
+         &orderDetail.Discount,
+      )
+      if err != nil {
+         return nil, err
+      }
+
+      orderDetails = append(orderDetails, orderDetail)
+   }
+
+   return orderDetails, nil
+}
